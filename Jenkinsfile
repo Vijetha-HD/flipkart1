@@ -44,7 +44,7 @@ pipeline {
 
         stage("Build Docker Image") { 
             steps { 
-                sh 'docker build -t maxxy .' 
+                sh 'docker build -t flipkart .' 
             } 
             post { 
                 success { 
@@ -58,11 +58,11 @@ pipeline {
 
               stage("Push to Docker Hub") { 
             steps { 
-                withCredentials([usernamePassword(credentialsId: 'credendials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) { 
+                withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) { 
                     sh ''' 
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin 
-                        docker tag maxxy $DOCKER_USER/maxxy:latest 
-                        docker push $DOCKER_USER/maxxy:latest 
+                        docker tag flipkart $DOCKER_USER/flipkart:latest 
+                        docker push $DOCKER_USER/flipkart:latest 
                     ''' 
                 } 
             } 
@@ -80,8 +80,8 @@ pipeline {
         stage("Remove Docker Image Locally") { 
             steps { 
                 sh """ 
-                docker rmi -f ${DOCKERHUB_USERNAME}/maxxy || true 
-                docker rmi -f maxxy || true 
+                docker rmi -f ${DOCKERHUB_USERNAME}/flipkart || true 
+                docker rmi -f flipkart || true 
                 """ 
             } 
             post { 
@@ -98,7 +98,7 @@ pipeline {
             steps { 
                 sh """ 
                 docker rm -f app || true 
-                docker run -d --name app -p 8081:8080 ${DOCKERHUB_USERNAME}/maxxy 
+                docker run -d --name app -p 8081:8080 ${DOCKERHUB_USERNAME}/flipkart 
                 """ 
             } 
             post { 
